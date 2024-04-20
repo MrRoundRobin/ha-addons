@@ -13,7 +13,6 @@ WORKDIR /coredns
 RUN go get github.com/coredns/alternate
 RUN go get github.com/coredns/records
 RUN go generate
-# RUN make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARCH=arm64"
 ARG BUILD_ARCH
 RUN set -x && \
     if [ "${BUILD_ARCH}" = "armhf" ]; then \
@@ -41,7 +40,7 @@ COPY --from=builder /coredns/coredns /coredns/
 ENTRYPOINT ["/coredns/coredns"]
 CMD ["-conf", "/config/Corefile"]
 LABEL org.opencontainers.image.authors="robin.mueller@outlook.de" \
-      org.opencontainers.image.title="Coredns for Home Assistant" \
+      org.opencontainers.image.title="CoreDNS for Home Assistant" \
       org.opencontainers.image.source="https://github.com/MrRoundRobin/ha_coredns" \
       io.hass.version="2024.4.3" \
       io.hass.type="addon" \

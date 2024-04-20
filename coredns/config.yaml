@@ -25,7 +25,7 @@ ports_description:
 map:
   - ssl
   - addon_config
-image: ghcr.io/mrroundrobin/ha-coredns
+image: ghcr.io/mrroundrobin/ha-coredns-{arch}
 advanced: true
 stage: experimental
 init: false
