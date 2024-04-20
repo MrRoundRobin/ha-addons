@@ -22,4 +22,4 @@ jobs:
           args: |
             --all \
             --target coredns \
-            --docker-hub ${{ secrets.DOCKERHUB_USERNAME }}
+            --docker-hub ha-coredns
