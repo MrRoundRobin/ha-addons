@@ -10,7 +10,6 @@ arch:
   - i386
 url: https://github.com/MrRoundRobin/ha-addons/tree/main/coredns
 startup: system
-boot: auto
 ports:
   53/tcp: 53
   53/udp: 53
@@ -23,7 +22,6 @@ ports_description:
   80/tcp: "Health Check"
   443/tcp: "DNS over HTTPS"
   9153/tcp: "Prometheus"
-host_network: false
 map:
   - ssl
   - addon_config
