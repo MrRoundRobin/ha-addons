@@ -14,9 +14,7 @@ RUN go get github.com/coredns/records
 RUN go generate
 ARG BUILD_ARCH
 RUN set -x && \
-    if [ "${BUILD_ARCH}" = "armhf" ]; then \
-        make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARM=6 GOARCH=arm"; \
-    elif [ "${BUILD_ARCH}" = "armv7" ]; then \
+    if [ "${BUILD_ARCH}" = "armv7" ]; then \
         make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARM=7 GOARCH=arm"; \
     elif [ "${BUILD_ARCH}" = "aarch64" ]; then \
         make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARCH=arm64"; \
