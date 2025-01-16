@@ -1,15 +1,14 @@
 ARG BUILD_FROM
 ARG BUILD_VERSION
 
-FROM golang:1.22.2-alpine3.19 AS builder
-ARG COREDNS_VERSION=1.11.1
-RUN apk add --no-cache \
-        git \
-        libcap \
-        make \
-    && git clone --depth 1 --branch v${COREDNS_VERSION} https://github.com/coredns/coredns /coredns
-COPY src/plugin.cfg /coredns/
-WORKDIR /coredns
+FROM golang:1.22 AS builder
+ARG COREDNS_VERSION=1.12.0
+RUN apt-get update;\
+    apt-get install -y --no-install-recommends git libcap2-bin; \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch v${COREDNS_VERSION} https://github.com/coredns/coredns /go/src/github.com/coredns/coredns
+COPY src/plugin.cfg /go/src/github.com/coredns/coredns
+WORKDIR /go/src/github.com/coredns/coredns
 RUN go get github.com/coredns/alternate
 RUN go get github.com/coredns/records
 RUN go generate
@@ -28,7 +27,7 @@ RUN set -x && \
     else \
         exit 1; \
     fi
-RUN setcap cap_net_bind_service=+ep /coredns/coredns
+RUN setcap cap_net_bind_service=+ep /go/src/github.com/coredns/coredns/coredns
 
 FROM $BUILD_FROM
 EXPOSE 53/tcp \
@@ -36,12 +35,12 @@ EXPOSE 53/tcp \
        80/tcp \
        443/tcp \
        9153/tcp
-COPY --from=builder /coredns/coredns /coredns/
+COPY --from=builder /go/src/github.com/coredns/coredns/coredns /coredns/
 ENTRYPOINT ["/coredns/coredns"]
 CMD ["-conf", "/config/Corefile"]
 LABEL org.opencontainers.image.authors="robin.mueller@outlook.de" \
       org.opencontainers.image.title="CoreDNS for Home Assistant" \
       org.opencontainers.image.source="https://github.com/MrRoundRobin/ha_coredns" \
-      io.hass.version="2024.4.3" \
+      io.hass.version="2025.1.0" \
       io.hass.type="addon" \
       io.hass.arch="armhf|armv7|aarch64|i386|amd64"
