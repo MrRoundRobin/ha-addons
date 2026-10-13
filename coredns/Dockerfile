@@ -1,8 +1,8 @@
 ARG BUILD_FROM
 ARG BUILD_VERSION
 
-FROM golang:1.22 AS builder
-ARG COREDNS_VERSION=1.12.0
+FROM golang:1.25 AS builder
+ARG COREDNS_VERSION=1.14.7
 RUN apt-get update;\
     apt-get install -y --no-install-recommends git libcap2-bin; \
     rm -rf /var/lib/apt/lists/*
@@ -41,4 +41,4 @@ LABEL org.opencontainers.image.authors="robin.mueller@outlook.de" \
       org.opencontainers.image.source="https://github.com/MrRoundRobin/ha_coredns" \
       io.hass.version="2025.1.0" \
       io.hass.type="addon" \
-      io.hass.arch="armhf|armv7|aarch64|i386|amd64"
+      io.hass.arch="armv7|aarch64|i386|amd64"
