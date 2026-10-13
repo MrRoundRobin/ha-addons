@@ -75,6 +75,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Log in to GitHub Container Registry
+        if: inputs.publish == false
+        uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build image
         uses: home-assistant/builder/actions/build-image@2026.09.0
         with:
