@@ -1,5 +1,4 @@
-ARG BUILD_FROM
-ARG BUILD_VERSION
+ARG BUILD_FROM=ghcr.io/home-assistant/base:3.24
 
 FROM golang:1.25 AS builder
 ARG COREDNS_VERSION=1.14.7
@@ -12,17 +11,14 @@ WORKDIR /go/src/github.com/coredns/coredns
 RUN go get github.com/coredns/alternate
 RUN go get github.com/coredns/records
 RUN go generate
-ARG BUILD_ARCH
+ARG TARGETARCH
 RUN set -x && \
-    if [ "${BUILD_ARCH}" = "armv7" ]; then \
-        make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARM=7 GOARCH=arm"; \
-    elif [ "${BUILD_ARCH}" = "aarch64" ]; then \
+    if [ "${TARGETARCH}" = "arm64" ]; then \
         make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARCH=arm64"; \
-    elif [ "${BUILD_ARCH}" = "i386" ]; then \
-        make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARCH=386"; \
-    elif [ "${BUILD_ARCH}" = "amd64" ]; then \
+    elif [ "${TARGETARCH}" = "amd64" ]; then \
         make coredns SYSTEM="CGO_ENABLED=0 GOOS=linux GOARCH=amd64"; \
     else \
+        echo "Unsupported TARGETARCH: ${TARGETARCH}"; \
         exit 1; \
     fi
 RUN setcap cap_net_bind_service=+ep /go/src/github.com/coredns/coredns/coredns
@@ -38,7 +34,5 @@ ENTRYPOINT ["/coredns/coredns"]
 CMD ["-conf", "/config/Corefile"]
 LABEL org.opencontainers.image.authors="robin.mueller@outlook.de" \
       org.opencontainers.image.title="CoreDNS for Home Assistant" \
-      org.opencontainers.image.source="https://github.com/MrRoundRobin/ha_coredns" \
-      io.hass.version="2025.1.0" \
-      io.hass.type="addon" \
-      io.hass.arch="armv7|aarch64|i386|amd64"
+      org.opencontainers.image.description="CoreDNS for Home Assistant" \
+      org.opencontainers.image.source="https://github.com/MrRoundRobin/ha-addons"
